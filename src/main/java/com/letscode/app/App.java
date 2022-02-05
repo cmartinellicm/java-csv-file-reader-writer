@@ -1,5 +1,6 @@
 package com.letscode.app;
 
+import com.letscode.app.utils.Match;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -9,44 +10,54 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class App
 {
     public static void main(String[] args) throws IOException {
-        ArrayList<String[]> results = readCSVFile("/Users/cassia/Documents/mod7-santander811matchesResult.csv");
+        String filePath = "/Users/cassia/Documents/mod7-santander811matchesResult.csv";
 
-//        for (String match[] : results) {
-//            System.out.println(Arrays.toString(match));
-//        }
+        List<Match> tournamentResults = readCSVFile(filePath);
 
-        writeCSVFile(results);
+        writeCSVFile(tournamentResults);
     }
 
-    private static void writeCSVFile(ArrayList<String[]> results) throws IOException {
-        FileWriter out = new FileWriter("/Users/cassia/Documents/new-test-file.csv");
-//        CSVFormat.DEFAULT.withHeader("time_1(mandante)", "time2(visitante)", "placar_time_1", "placar_time_1", "data").print(out);
+    private static void writeCSVFile(List<Match> results) throws IOException {
 
-        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader("time_1(mandante)", "time2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
-            for (String match[] : results) {
-                printer.printRecord(match);
-            }
+        FileWriter out = new FileWriter("/Users/cassia/Documents/new-test-file-object.csv");
+        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
+            results.stream().forEach(match -> {
+                try {
+                    printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         }
     }
 
-    private static ArrayList<String[]> readCSVFile(String filePath) {
-        ArrayList<String[]> records = new ArrayList<>();
-        try(
-                BufferedReader br = new BufferedReader(new FileReader(filePath));
-                CSVParser parser = CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader().parse(br);
-        ) {
-            for(CSVRecord record : parser) {
-                String[] match = {record.get("time_1(mandante)"), record.get("time2(visitante)"), record.get("placar_time_1"), record.get("placar_time_2"), record.get("data")};
-                records.add(match);
+    private static List<Match> readCSVFile(String filePath) {
+        List<Match> results = new ArrayList<>();
+
+        try(BufferedReader br = new BufferedReader(new FileReader(filePath));
+            CSVParser records = CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader().parse(br);
+            ) {
+            for(CSVRecord record : records) {
+                String firstTeam = record.get("time_1(mandante)");
+                String secondTeam = record.get("time_2(visitante)");
+                int firstTeamResult = Integer.parseInt(record.get("placar_time_1"));
+                int secondTeamResult = Integer.parseInt(record.get("placar_time_2"));
+                LocalDate matchDate = LocalDate.parse(record.get("data"));
+
+                Match match = new Match(firstTeam, secondTeam, firstTeamResult, secondTeamResult, matchDate);
+
+                results.add(match);
             }
         } catch (Exception e) {
             System.out.println(e);
         }
-        return records;
+        return results;
     }
 }
