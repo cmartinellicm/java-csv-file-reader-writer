@@ -8,11 +8,9 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,31 +39,14 @@ public class HandleFiles
         return results;
     }
 
-//    public static void writeDataOnCSVFile(List<Match> results, String filePath) throws IOException {
-//        FileWriter out = new FileWriter(filePath);
-//
-//        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
-//            results.stream().forEach(match -> {
-//                try {
-//                    printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            });
-//        }
-//    }
-
     public static void generateTeamFile(List<Match> teamMatches, String team) throws IOException {
-        // TODO: change to txt file and lines format
-        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team + "-results.csv");
+        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team + "-results.txt");
 
-        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
+        try (PrintWriter printer = new PrintWriter(out)) {
             teamMatches.stream().forEach(match -> {
-                try {
-                    printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/LL/yy");
+                String dateString = match.getMatchDate().format(formatter);
+                printer.println(dateString + ": " + match.getFirstTeam() + " " + match.getFirstTeamResult() + " x " + match.getSecondTeamResult() + " " + match.getSecondTeam());
             });
         }
     }
