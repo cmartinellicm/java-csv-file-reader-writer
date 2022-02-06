@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HandleCSVFiles
+public class HandleFiles
 {
     public static List<Match> readCSVFile(String filePath) {
         List<Match> results = new ArrayList<>();

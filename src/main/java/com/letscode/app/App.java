@@ -1,11 +1,13 @@
 package com.letscode.app;
 
-import com.letscode.app.services.HandleCSVFiles;
+import com.letscode.app.services.HandleFiles;
 import com.letscode.app.utils.Match;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class App
 {
@@ -13,11 +15,15 @@ public class App
         final String FILES_PATH = "/Users/cassia/Documents/";
         String inputFile = FILES_PATH + "mod7-santander811matchesResult.csv";
 
-        List<Match> resultsList = HandleCSVFiles.readCSVFile(inputFile);
+        List<Match> resultsList = HandleFiles.readCSVFile(inputFile);
         List<Match> validResults = removeDuplicates(resultsList);
 
-        String outputFile = FILES_PATH + "output-file2.csv";
-        HandleCSVFiles.writeDataOnCSVFile(validResults, outputFile);
+        List<Match> sortedList = validResults.stream()
+                .sorted(Comparator.comparing(Match::getMatchDate).thenComparing(Match::getFirstTeam).thenComparing(Match::getSecondTeam))
+                .collect(Collectors.toList());
+
+        String outputFile = FILES_PATH + "output-file3-sorted.csv";
+        HandleFiles.writeDataOnCSVFile(sortedList, outputFile);
     }
 
     private static List<Match> removeDuplicates(List<Match> resultsList) {
