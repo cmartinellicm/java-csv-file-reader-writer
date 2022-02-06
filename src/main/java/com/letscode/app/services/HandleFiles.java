@@ -11,13 +11,14 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HandleFiles
 {
-    public static List<Match> readCSVFile(String filePath) {
-        List<Match> results = new ArrayList<>();
+    public static Set<Match> readCSVFile(String filePath) {
+        Set<Match> results = new HashSet<>();
 
         try(BufferedReader br = new BufferedReader(new FileReader(filePath));
             CSVParser records = CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader().parse(br);

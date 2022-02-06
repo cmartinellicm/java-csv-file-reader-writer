@@ -13,10 +13,9 @@ public class App
     public static final String FILES_PATH = "/Users/cassia/Documents/";
 
     public static void main(String[] args) throws IOException {
-        String inputFile = FILES_PATH + "mod7-santander811matchesResult.csv";
+        String inputFile = FILES_PATH + "santander811matchesResult.csv";
 
-        List<Match> resultsList = HandleFiles.readCSVFile(inputFile);
-        Set<Match> validResults = removeDuplicates(resultsList);
+        Set<Match> validResults = HandleFiles.readCSVFile(inputFile);
         List<Match> sortedResults = sortResultsByDateTeam1Team2(validResults);
 
         Set<Team> teamSet = extractTeamsList(sortedResults);
@@ -35,12 +34,6 @@ public class App
 
         String outputFile = FILES_PATH + "output-final.csv";
         HandleFiles.writeTeamsOnCSVFile(finalResultsTable, outputFile);
-    }
-
-    private static Set<Match> removeDuplicates(List<Match> resultsList) {
-        Set<Match> nonDuplicatedResults = new HashSet<>();
-        resultsList.stream().forEach(match -> nonDuplicatedResults.add(match));
-        return nonDuplicatedResults;
     }
 
     private static List<Match> sortResultsByDateTeam1Team2(Set<Match> validResults) {
