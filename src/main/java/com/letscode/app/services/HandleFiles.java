@@ -1,6 +1,5 @@
 package com.letscode.app.services;
 
-import com.letscode.app.App;
 import com.letscode.app.utils.Match;
 import com.letscode.app.utils.Team;
 import org.apache.commons.csv.CSVFormat;
@@ -15,10 +14,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.letscode.app.App.FILES_PATH;
+
 public class HandleFiles
 {
     public static Set<Match> readCSVFile(String filePath) {
-        Set<Match> results = new HashSet<>();
+        Set<Match> matchSet = new HashSet<>();
 
         try(BufferedReader br = new BufferedReader(new FileReader(filePath));
             CSVParser records = CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader().parse(br);
@@ -30,21 +31,21 @@ public class HandleFiles
                 int secondTeamResult = Integer.parseInt(record.get("placar_time_2"));
                 LocalDate matchDate = LocalDate.parse(record.get("data"));
 
-                Match match = new Match(firstTeam, secondTeam, firstTeamResult, secondTeamResult, matchDate);
-
-                results.add(match);
+                Match newMatch = new Match(firstTeam, secondTeam, firstTeamResult, secondTeamResult, matchDate);
+                matchSet.add(newMatch);
             }
         } catch (Exception e) {
             System.out.println(e);
         }
-        return results;
+        return matchSet;
     }
 
-    public static void generateTeamFile(List<Match> teamMatches, Team team) throws IOException {
-        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team.getName() + "-history.txt");
+    public static void writeTeamTxtFile(List<Match> matchList, Team team) throws IOException {
+        String teamName = team.getName();
+        FileWriter out = new FileWriter(FILES_PATH + "teamFiles/" + teamName + "-history.txt");
 
         try (PrintWriter printer = new PrintWriter(out)) {
-            teamMatches.stream().forEach(match -> {
+            matchList.stream().forEach(match -> {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/LL/yy");
                 String dateString = match.getMatchDate().format(formatter);
                 printer.println(dateString + ": " + match.getFirstTeam() + " " + match.getFirstTeamResult() + " x " + match.getSecondTeamResult() + " " + match.getSecondTeam());
@@ -52,7 +53,7 @@ public class HandleFiles
         }
     }
 
-    public static void writeTeamsOnCSVFile(List<Team> finalResultsTable, String filePath) throws IOException {
+    public static void writeResultsCsvFile(List<Team> finalResultsTable, String filePath) throws IOException {
         FileWriter out = new FileWriter(filePath);
 
         try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("Time", "Vitórias", "Empates", "Derrotas", "Pontos"))) {

@@ -23,13 +23,13 @@ public class App
         for (Team team : teamSet) {
             List<Match> teamMatchesList = HandleData.extractTeamMatches(matchListByDate, team);
 
-            HandleFiles.generateTeamFile(teamMatchesList, team);
+            HandleFiles.writeTeamTxtFile(teamMatchesList, team);
             HandleData.updateTeamPoints(teamMatchesList, team);
         }
 
         List<Team> finalResultsList = HandleData.sortTeamsByTotalPoints(teamSet);
 
         String outputFile = FILES_PATH + "final-results.csv";
-        HandleFiles.writeTeamsOnCSVFile(finalResultsList, outputFile);
+        HandleFiles.writeResultsCsvFile(finalResultsList, outputFile);
     }
 }
