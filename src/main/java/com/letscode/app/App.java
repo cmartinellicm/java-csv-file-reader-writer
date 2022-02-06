@@ -15,24 +15,21 @@ public class App
     public static void main(String[] args) throws IOException {
         String inputFile = FILES_PATH + "santander811matchesResult.csv";
 
-        Set<Match> validResults = HandleFiles.readCSVFile(inputFile);
-        List<Match> sortedResults = HandleData.sortResultsByDateTeam1Team2(validResults);
+        Set<Match> validMatchesSet = HandleFiles.readCSVFile(inputFile);
+        List<Match> matchListByDate = HandleData.sortMatchesByDateTeam1Team2(validMatchesSet);
 
-        Set<Team> teamSet = HandleData.extractTeamsList(sortedResults);
+        Set<Team> teamSet = HandleData.extractTeamSet(matchListByDate);
 
-        teamSet.stream().forEach(team -> {
-            List<Match> teamMatches = HandleData.extractTeamMatches(sortedResults, team.getName());
-            try {
-                HandleFiles.generateTeamFile(teamMatches, team.getName());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            HandleData.updateTeamPunctuation(teamMatches, team);
-        });
+        for (Team team : teamSet) {
+            List<Match> teamMatchesList = HandleData.extractTeamMatches(matchListByDate, team.getName());
 
-        List<Team> finalResultsTable = HandleData.sortTeamsByTotalPoints(teamSet);
+            HandleFiles.generateTeamFile(teamMatchesList, team);
+            HandleData.updateTeamPoints(teamMatchesList, team);
+        }
 
-        String outputFile = FILES_PATH + "output-final.csv";
-        HandleFiles.writeTeamsOnCSVFile(finalResultsTable, outputFile);
+        List<Team> finalResultsList = HandleData.sortTeamsByTotalPoints(teamSet);
+
+        String outputFile = FILES_PATH + "final-results.csv";
+        HandleFiles.writeTeamsOnCSVFile(finalResultsList, outputFile);
     }
 }

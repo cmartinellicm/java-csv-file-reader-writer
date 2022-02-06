@@ -11,13 +11,13 @@ import java.util.stream.Collectors;
 
 public class HandleData
 {
-    public static List<Match> sortResultsByDateTeam1Team2(Set<Match> validResults) {
+    public static List<Match> sortMatchesByDateTeam1Team2(Set<Match> validResults) {
         return validResults.stream()
                 .sorted(Comparator.comparing(Match::getMatchDate).thenComparing(Match::getFirstTeam).thenComparing(Match::getSecondTeam))
                 .collect(Collectors.toList());
     }
 
-    public static Set<Team> extractTeamsList(List<Match> sortedList) {
+    public static Set<Team> extractTeamSet(List<Match> sortedList) {
         Set<Team> teamsList = new HashSet<>();
         sortedList.stream().forEach(match -> teamsList.add(new Team(match.getFirstTeam())));
         return teamsList;
@@ -28,7 +28,7 @@ public class HandleData
         return teamMatches;
     }
 
-    public static void updateTeamPunctuation(List<Match> teamMatches, Team team) {
+    public static void updateTeamPoints(List<Match> teamMatches, Team team) {
         teamMatches.stream().forEach(match -> {
             if (match.getFirstTeam().equals(team.getName())) {
                 if (match.getFirstTeamResult() > match.getSecondTeamResult()) {

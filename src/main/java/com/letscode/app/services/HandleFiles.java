@@ -40,8 +40,8 @@ public class HandleFiles
         return results;
     }
 
-    public static void generateTeamFile(List<Match> teamMatches, String team) throws IOException {
-        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team + "-history.txt");
+    public static void generateTeamFile(List<Match> teamMatches, Team team) throws IOException {
+        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team.getName() + "-history.txt");
 
         try (PrintWriter printer = new PrintWriter(out)) {
             teamMatches.stream().forEach(match -> {
