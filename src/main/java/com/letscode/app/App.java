@@ -1,63 +1,53 @@
 package com.letscode.app;
 
+import com.letscode.app.services.HandleCSVFiles;
 import com.letscode.app.utils.Match;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class App
 {
     public static void main(String[] args) throws IOException {
-        String filePath = "/Users/cassia/Documents/mod7-santander811matchesResult.csv";
+        final String FILES_PATH = "/Users/cassia/Documents/";
+        String inputFile = FILES_PATH + "mod7-santander811matchesResult.csv";
 
-        List<Match> tournamentResults = readCSVFile(filePath);
+        List<Match> resultsList = HandleCSVFiles.readCSVFile(inputFile);
+        List<Match> validResults = removeDuplicates(resultsList);
 
-        writeCSVFile(tournamentResults);
+        String outputFile = FILES_PATH + "output-file2.csv";
+        HandleCSVFiles.writeDataOnCSVFile(validResults, outputFile);
     }
 
-    private static void writeCSVFile(List<Match> results) throws IOException {
+    private static List<Match> removeDuplicates(List<Match> resultsList) {
+        List<Match> nonDuplicatedResults = new ArrayList<>();
+        boolean isNewMatch;
 
-        FileWriter out = new FileWriter("/Users/cassia/Documents/new-test-file-object.csv");
-        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
-            results.stream().forEach(match -> {
-                try {
-                    printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
-                } catch (IOException e) {
-                    e.printStackTrace();
+        nonDuplicatedResults.add(resultsList.get(0));
+
+        for (int i = 1; i < resultsList.size(); i++) {
+            isNewMatch = true;
+            for (int j = 0; j < nonDuplicatedResults.size(); j++) {
+                if (checkIfEqual(resultsList.get(i), nonDuplicatedResults.get(j))) {
+                    isNewMatch = false;
+                    break;
                 }
-            });
+            }
+            if (isNewMatch) nonDuplicatedResults.add(resultsList.get(i));
         }
+
+        return nonDuplicatedResults;
     }
 
-    private static List<Match> readCSVFile(String filePath) {
-        List<Match> results = new ArrayList<>();
-
-        try(BufferedReader br = new BufferedReader(new FileReader(filePath));
-            CSVParser records = CSVFormat.DEFAULT.withDelimiter(';').withFirstRecordAsHeader().parse(br);
-            ) {
-            for(CSVRecord record : records) {
-                String firstTeam = record.get("time_1(mandante)");
-                String secondTeam = record.get("time_2(visitante)");
-                int firstTeamResult = Integer.parseInt(record.get("placar_time_1"));
-                int secondTeamResult = Integer.parseInt(record.get("placar_time_2"));
-                LocalDate matchDate = LocalDate.parse(record.get("data"));
-
-                Match match = new Match(firstTeam, secondTeam, firstTeamResult, secondTeamResult, matchDate);
-
-                results.add(match);
-            }
-        } catch (Exception e) {
-            System.out.println(e);
+    private static boolean checkIfEqual(Match match1, Match match2) {
+        if (match1.getFirstTeam().equals(match2.getFirstTeam()) &&
+                match1.getSecondTeam().equals(match2.getSecondTeam()) &&
+                match1.getFirstTeamResult() == match2.getFirstTeamResult() &&
+                match1.getSecondTeamResult() == match2.getSecondTeamResult() &&
+                match1.getMatchDate().isEqual( match2.getMatchDate())) {
+            return true;
         }
-        return results;
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 package com.letscode.app.utils;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Match {
     String firstTeam;
@@ -55,5 +56,38 @@ public class Match {
 
     public void setMatchDate(LocalDate matchDate) {
         this.matchDate = matchDate;
+    }
+
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (this == obj)
+//            return true;
+//        if (obj == null)
+//            return false;
+//        if (getClass() != obj.getClass())
+//            return false;
+//        Match other = (Match) obj;
+//        if (firstTeam != other.firstTeam)
+//            return false;
+//        if (secondTeam != other.secondTeam)
+//            return false;
+//        if (firstTeamResult != other.firstTeamResult)
+//            return false;
+//        if (secondTeamResult != other.secondTeamResult)
+//            return false;
+//        if (matchDate != other.matchDate)
+//            return false;
+//        return true;
+//    }
+
+    @Override
+    public String toString() {
+        return "Match{" +
+                "firstTeam='" + firstTeam + '\'' +
+                ", secondTeam='" + secondTeam + '\'' +
+                ", firstTeamResult=" + firstTeamResult +
+                ", secondTeamResult=" + secondTeamResult +
+                ", matchDate=" + matchDate +
+                '}';
     }
 }
