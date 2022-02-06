@@ -2,6 +2,7 @@ package com.letscode.app.services;
 
 import com.letscode.app.App;
 import com.letscode.app.utils.Match;
+import com.letscode.app.utils.Team;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -40,11 +41,26 @@ public class HandleFiles
         return results;
     }
 
-    public static void writeDataOnCSVFile(List<Match> results, String filePath) throws IOException {
-        FileWriter out = new FileWriter(filePath);
+//    public static void writeDataOnCSVFile(List<Match> results, String filePath) throws IOException {
+//        FileWriter out = new FileWriter(filePath);
+//
+//        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
+//            results.stream().forEach(match -> {
+//                try {
+//                    printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        }
+//    }
+
+    public static void generateTeamFile(List<Match> teamMatches, String team) throws IOException {
+        // TODO: change to txt file and lines format
+        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team + "-results.csv");
 
         try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
-            results.stream().forEach(match -> {
+            teamMatches.stream().forEach(match -> {
                 try {
                     printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
                 } catch (IOException e) {
@@ -54,14 +70,13 @@ public class HandleFiles
         }
     }
 
-    public static void generateTeamFile(List<Match> teamMatches, String team) throws IOException {
-        // TODO: change to txt file and lines format
-        FileWriter out = new FileWriter(App.FILES_PATH + team + "-results.csv");
+    public static void writeTeamsOnCSVFile(List<Team> finalResultsTable, String filePath) throws IOException {
+        FileWriter out = new FileWriter(filePath);
 
-        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
-            teamMatches.stream().forEach(match -> {
+        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("Time", "Vitórias", "Empates", "Derrotas", "Pontos"))) {
+            finalResultsTable.stream().forEach(team -> {
                 try {
-                    printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
+                    printer.printRecord(team.getName(), team.getVictories(), team.getDraws(), team.getDefeats(),team.getTotalPoints());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -32,10 +32,9 @@ public class App
         });
 
         List<Team> finalResultsTable = sortTeamsByTotalPoints(teamSet);
-//        finalResultsTable.stream().forEach(team -> System.out.println(team.getName() + " " + team.getTotalPoints()));
 
-        String outputFile = FILES_PATH + "output-file3-sorted.csv";
-        HandleFiles.writeDataOnCSVFile(sortedResults, outputFile);
+        String outputFile = FILES_PATH + "output-final.csv";
+        HandleFiles.writeTeamsOnCSVFile(finalResultsTable, outputFile);
     }
 
     private static List<Match> removeDuplicates(List<Match> resultsList) {
