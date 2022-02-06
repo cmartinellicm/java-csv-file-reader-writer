@@ -1,7 +1,6 @@
 package com.letscode.app.utils;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 public class Match {
     String firstTeam;

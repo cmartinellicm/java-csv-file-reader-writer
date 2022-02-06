@@ -2,6 +2,7 @@ package com.letscode.app;
 
 import com.letscode.app.services.HandleFiles;
 import com.letscode.app.utils.Match;
+import com.letscode.app.utils.Team;
 
 import java.io.IOException;
 import java.util.*;
@@ -18,15 +19,19 @@ public class App
         List<Match> validResults = removeDuplicates(resultsList);
         List<Match> sortedResults = sortResultsList(validResults);
 
-        Set<String> teamsList = extractTeamsList(sortedResults);
+//        Set<String> teamsList = extractTeamsList(sortedResults);
+
+        Set<Team> teamsList = extractTeamsList2(sortedResults);
+//        teamsList2.stream().forEach(team -> System.out.println(team.getName()));
 
         teamsList.stream().forEach(team -> {
-            List<Match> teamMatches = extractTeamMatches(sortedResults, team);
+            List<Match> teamMatches = extractTeamMatches(sortedResults, team.getName());
             try {
-                HandleFiles.generateTeamFile(teamMatches, team);
+                HandleFiles.generateTeamFile(teamMatches, team.getName());
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         });
 
         String outputFile = FILES_PATH + "output-file3-sorted.csv";
@@ -77,10 +82,14 @@ public class App
         return teamsList;
     }
 
+    private static Set<Team> extractTeamsList2(List<Match> sortedList) {
+        Set<Team> teamsList = new HashSet<>();
+        sortedList.stream().forEach(match -> teamsList.add(new Team(match.getFirstTeam())));
+        return teamsList;
+    }
+
     private static List<Match> extractTeamMatches(List<Match> tournamentResults, String team) {
         List<Match> teamMatches = tournamentResults.stream().filter(match -> match.getFirstTeam().equals(team)).collect(Collectors.toList());
         return teamMatches;
     }
-
-
 }
