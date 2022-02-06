@@ -41,7 +41,7 @@ public class HandleFiles
     }
 
     public static void generateTeamFile(List<Match> teamMatches, String team) throws IOException {
-        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team + "-results.txt");
+        FileWriter out = new FileWriter(App.FILES_PATH + "teamFiles/" + team + "-history.txt");
 
         try (PrintWriter printer = new PrintWriter(out)) {
             teamMatches.stream().forEach(match -> {
