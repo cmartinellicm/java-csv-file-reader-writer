@@ -17,7 +17,7 @@ public class App
 
         List<Match> resultsList = HandleFiles.readCSVFile(inputFile);
         List<Match> validResults = removeDuplicates(resultsList);
-        List<Match> sortedResults = sortResultsList(validResults);
+        List<Match> sortedResults = sortResultsByDateTeam1Team2(validResults);
 
         Set<Team> teamSet = extractTeamsList(sortedResults);
 
@@ -30,6 +30,9 @@ public class App
             }
             updateTeamPunctuation(teamMatches, team);
         });
+
+        List<Team> finalResultsTable = sortTeamsByTotalPoints(teamSet);
+//        finalResultsTable.stream().forEach(team -> System.out.println(team.getName() + " " + team.getTotalPoints()));
 
         String outputFile = FILES_PATH + "output-file3-sorted.csv";
         HandleFiles.writeDataOnCSVFile(sortedResults, outputFile);
@@ -67,7 +70,7 @@ public class App
         return false;
     }
 
-    private static List<Match> sortResultsList(List<Match> validResults) {
+    private static List<Match> sortResultsByDateTeam1Team2(List<Match> validResults) {
         return validResults.stream()
                 .sorted(Comparator.comparing(Match::getMatchDate).thenComparing(Match::getFirstTeam).thenComparing(Match::getSecondTeam))
                 .collect(Collectors.toList());
@@ -105,5 +108,9 @@ public class App
             }
             team.setTotalPoints();
         });
+    }
+
+    private static List<Team> sortTeamsByTotalPoints(Set<Team> teamSet) {
+        return teamSet.stream().sorted(Comparator.comparingInt(Team::getTotalPoints).reversed()).collect(Collectors.toList());
     }
 }
