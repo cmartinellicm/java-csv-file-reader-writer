@@ -19,19 +19,16 @@ public class App
         List<Match> validResults = removeDuplicates(resultsList);
         List<Match> sortedResults = sortResultsList(validResults);
 
-//        Set<String> teamsList = extractTeamsList(sortedResults);
+        Set<Team> teamSet = extractTeamsList(sortedResults);
 
-        Set<Team> teamsList = extractTeamsList2(sortedResults);
-//        teamsList2.stream().forEach(team -> System.out.println(team.getName()));
-
-        teamsList.stream().forEach(team -> {
+        teamSet.stream().forEach(team -> {
             List<Match> teamMatches = extractTeamMatches(sortedResults, team.getName());
             try {
                 HandleFiles.generateTeamFile(teamMatches, team.getName());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+            updateTeamPunctuation(teamMatches, team);
         });
 
         String outputFile = FILES_PATH + "output-file3-sorted.csv";
@@ -76,20 +73,37 @@ public class App
                 .collect(Collectors.toList());
     }
 
-    private static Set<String> extractTeamsList(List<Match> sortedList) {
-        Set<String> teamsList = new HashSet<>();
-        sortedList.stream().forEach(match -> teamsList.add(match.getFirstTeam()));
-        return teamsList;
-    }
-
-    private static Set<Team> extractTeamsList2(List<Match> sortedList) {
+    private static Set<Team> extractTeamsList(List<Match> sortedList) {
         Set<Team> teamsList = new HashSet<>();
         sortedList.stream().forEach(match -> teamsList.add(new Team(match.getFirstTeam())));
         return teamsList;
     }
 
     private static List<Match> extractTeamMatches(List<Match> tournamentResults, String team) {
-        List<Match> teamMatches = tournamentResults.stream().filter(match -> match.getFirstTeam().equals(team)).collect(Collectors.toList());
+        List<Match> teamMatches = tournamentResults.stream().filter(match -> match.getFirstTeam().equals(team) || match.getSecondTeam().equals(team)).collect(Collectors.toList());
         return teamMatches;
+    }
+    
+    private static void updateTeamPunctuation(List<Match> teamMatches, Team team) {
+        teamMatches.stream().forEach(match -> {
+            if (match.getFirstTeam().equals(team.getName())) {
+                if (match.getFirstTeamResult() > match.getSecondTeamResult()) {
+                    team.setVictories();
+                } else if (match.getFirstTeamResult() < match.getSecondTeamResult()) {
+                    team.setDefeats();
+                } else {
+                    team.setDraws();
+                }
+            } else if (match.getSecondTeam().equals( team.getName())) {
+                if (match.getFirstTeamResult() < match.getSecondTeamResult()) {
+                    team.setVictories();
+                } else if (match.getFirstTeamResult() > match.getSecondTeamResult()) {
+                    team.setDefeats();
+                } else {
+                    team.setDraws();
+                }
+            }
+            team.setTotalPoints();
+        });
     }
 }

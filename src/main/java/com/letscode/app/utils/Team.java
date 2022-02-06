@@ -12,7 +12,7 @@ public class Team {
         this.victories = 0;
         this.draws = 0;
         this.defeats = 0;
-        this.totalPoints = getTotalPoints();
+        this.totalPoints = 0;
     }
 
     public String getName() {
@@ -27,32 +27,32 @@ public class Team {
         return victories;
     }
 
-    public void setVictories(int victories) {
-        this.victories = victories;
+    public void setVictories() {
+        this.victories++;
     }
 
     public int getDraws() {
         return draws;
     }
 
-    public void setDraws(int draws) {
-        this.draws = draws;
+    public void setDraws() {
+        this.draws++;
     }
 
     public int getDefeats() {
         return defeats;
     }
 
-    public void setDefeats(int defeats) {
-        this.defeats = defeats;
+    public void setDefeats() {
+        this.defeats++;
     }
 
-    private int getTotalPoints() {
-        return this.victories + this.draws + this.totalPoints;
+    public int getTotalPoints() {
+        return totalPoints;
     }
 
-    public void setTotalPoints(int totalPoints) {
-        this.totalPoints = totalPoints;
+    public void setTotalPoints() {
+        this.totalPoints = this.victories * 3 + this.draws * 1;
     }
 
     @Override
