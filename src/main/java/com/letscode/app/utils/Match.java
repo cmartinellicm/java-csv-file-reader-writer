@@ -1,5 +1,7 @@
 package com.letscode.app.utils;
 
+import com.google.common.base.Objects;
+
 import java.time.LocalDate;
 
 public class Match {
@@ -57,27 +59,18 @@ public class Match {
         this.matchDate = matchDate;
     }
 
-//    @Override
-//    public boolean equals(Object obj) {
-//        if (this == obj)
-//            return true;
-//        if (obj == null)
-//            return false;
-//        if (getClass() != obj.getClass())
-//            return false;
-//        Match other = (Match) obj;
-//        if (firstTeam != other.firstTeam)
-//            return false;
-//        if (secondTeam != other.secondTeam)
-//            return false;
-//        if (firstTeamResult != other.firstTeamResult)
-//            return false;
-//        if (secondTeamResult != other.secondTeamResult)
-//            return false;
-//        if (matchDate != other.matchDate)
-//            return false;
-//        return true;
-//    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Match match = (Match) o;
+        return firstTeamResult == match.firstTeamResult && secondTeamResult == match.secondTeamResult && Objects.equal(firstTeam, match.firstTeam) && Objects.equal(secondTeam, match.secondTeam) && Objects.equal(matchDate, match.matchDate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(firstTeam, secondTeam, firstTeamResult, secondTeamResult, matchDate);
+    }
 
     @Override
     public String toString() {

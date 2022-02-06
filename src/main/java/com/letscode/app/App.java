@@ -16,7 +16,7 @@ public class App
         String inputFile = FILES_PATH + "mod7-santander811matchesResult.csv";
 
         List<Match> resultsList = HandleFiles.readCSVFile(inputFile);
-        List<Match> validResults = removeDuplicates(resultsList);
+        Set<Match> validResults = removeDuplicates(resultsList);
         List<Match> sortedResults = sortResultsByDateTeam1Team2(validResults);
 
         Set<Team> teamSet = extractTeamsList(sortedResults);
@@ -37,39 +37,13 @@ public class App
         HandleFiles.writeTeamsOnCSVFile(finalResultsTable, outputFile);
     }
 
-    private static List<Match> removeDuplicates(List<Match> resultsList) {
-        // TODO: better way to remove duplicates from list
-        List<Match> nonDuplicatedResults = new ArrayList<>();
-        boolean isNewMatch;
-
-        nonDuplicatedResults.add(resultsList.get(0));
-
-        for (int i = 1; i < resultsList.size(); i++) {
-            isNewMatch = true;
-            for (int j = 0; j < nonDuplicatedResults.size(); j++) {
-                if (checkIfObjectsAreEqual(resultsList.get(i), nonDuplicatedResults.get(j))) {
-                    isNewMatch = false;
-                    break;
-                }
-            }
-            if (isNewMatch) nonDuplicatedResults.add(resultsList.get(i));
-        }
-
+    private static Set<Match> removeDuplicates(List<Match> resultsList) {
+        Set<Match> nonDuplicatedResults = new HashSet<>();
+        resultsList.stream().forEach(match -> nonDuplicatedResults.add(match));
         return nonDuplicatedResults;
     }
 
-    private static boolean checkIfObjectsAreEqual(Match match1, Match match2) {
-        if (match1.getFirstTeam().equals(match2.getFirstTeam()) &&
-                match1.getSecondTeam().equals(match2.getSecondTeam()) &&
-                match1.getFirstTeamResult() == match2.getFirstTeamResult() &&
-                match1.getSecondTeamResult() == match2.getSecondTeamResult() &&
-                match1.getMatchDate().isEqual( match2.getMatchDate())) {
-            return true;
-        }
-        return false;
-    }
-
-    private static List<Match> sortResultsByDateTeam1Team2(List<Match> validResults) {
+    private static List<Match> sortResultsByDateTeam1Team2(Set<Match> validResults) {
         return validResults.stream()
                 .sorted(Comparator.comparing(Match::getMatchDate).thenComparing(Match::getFirstTeam).thenComparing(Match::getSecondTeam))
                 .collect(Collectors.toList());
