@@ -21,7 +21,7 @@ public class App
         Set<Team> teamSet = HandleData.extractTeamSet(matchListByDate);
 
         for (Team team : teamSet) {
-            List<Match> teamMatchesList = HandleData.extractTeamMatches(matchListByDate, team.getName());
+            List<Match> teamMatchesList = HandleData.extractTeamMatches(matchListByDate, team);
 
             HandleFiles.generateTeamFile(teamMatchesList, team);
             HandleData.updateTeamPoints(teamMatchesList, team);
