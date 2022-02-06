@@ -1,5 +1,6 @@
 package com.letscode.app.services;
 
+import com.letscode.app.App;
 import com.letscode.app.utils.Match;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -44,6 +45,21 @@ public class HandleFiles
 
         try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
             results.stream().forEach(match -> {
+                try {
+                    printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+
+    public static void generateTeamFile(List<Match> teamMatches, String team) throws IOException {
+        // TODO: change to txt file and lines format
+        FileWriter out = new FileWriter(App.FILES_PATH + team + "-results.csv");
+
+        try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withDelimiter(';').withHeader("time_1(mandante)", "time_2(visitante)", "placar_time_1", "placar_time_1", "data"))) {
+            teamMatches.stream().forEach(match -> {
                 try {
                     printer.printRecord(match.getFirstTeam(), match.getSecondTeam(), match.getFirstTeamResult(), match.getSecondTeamResult(), match.getMatchDate());
                 } catch (IOException e) {

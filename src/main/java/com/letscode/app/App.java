@@ -4,29 +4,37 @@ import com.letscode.app.services.HandleFiles;
 import com.letscode.app.utils.Match;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class App
 {
+    public static final String FILES_PATH = "/Users/cassia/Documents/";
+
     public static void main(String[] args) throws IOException {
-        final String FILES_PATH = "/Users/cassia/Documents/";
         String inputFile = FILES_PATH + "mod7-santander811matchesResult.csv";
 
         List<Match> resultsList = HandleFiles.readCSVFile(inputFile);
         List<Match> validResults = removeDuplicates(resultsList);
+        List<Match> sortedResults = sortResultsList(validResults);
 
-        List<Match> sortedList = validResults.stream()
-                .sorted(Comparator.comparing(Match::getMatchDate).thenComparing(Match::getFirstTeam).thenComparing(Match::getSecondTeam))
-                .collect(Collectors.toList());
+        Set<String> teamsList = extractTeamsList(sortedResults);
+
+        teamsList.stream().forEach(team -> {
+            List<Match> teamMatches = extractTeamMatches(sortedResults, team);
+            try {
+                HandleFiles.generateTeamFile(teamMatches, team);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
 
         String outputFile = FILES_PATH + "output-file3-sorted.csv";
-        HandleFiles.writeDataOnCSVFile(sortedList, outputFile);
+        HandleFiles.writeDataOnCSVFile(sortedResults, outputFile);
     }
 
     private static List<Match> removeDuplicates(List<Match> resultsList) {
+        // TODO: better way to remove duplicates from list
         List<Match> nonDuplicatedResults = new ArrayList<>();
         boolean isNewMatch;
 
@@ -35,7 +43,7 @@ public class App
         for (int i = 1; i < resultsList.size(); i++) {
             isNewMatch = true;
             for (int j = 0; j < nonDuplicatedResults.size(); j++) {
-                if (checkIfEqual(resultsList.get(i), nonDuplicatedResults.get(j))) {
+                if (checkIfObjectsAreEqual(resultsList.get(i), nonDuplicatedResults.get(j))) {
                     isNewMatch = false;
                     break;
                 }
@@ -46,7 +54,7 @@ public class App
         return nonDuplicatedResults;
     }
 
-    private static boolean checkIfEqual(Match match1, Match match2) {
+    private static boolean checkIfObjectsAreEqual(Match match1, Match match2) {
         if (match1.getFirstTeam().equals(match2.getFirstTeam()) &&
                 match1.getSecondTeam().equals(match2.getSecondTeam()) &&
                 match1.getFirstTeamResult() == match2.getFirstTeamResult() &&
@@ -56,4 +64,23 @@ public class App
         }
         return false;
     }
+
+    private static List<Match> sortResultsList(List<Match> validResults) {
+        return validResults.stream()
+                .sorted(Comparator.comparing(Match::getMatchDate).thenComparing(Match::getFirstTeam).thenComparing(Match::getSecondTeam))
+                .collect(Collectors.toList());
+    }
+
+    private static Set<String> extractTeamsList(List<Match> sortedList) {
+        Set<String> teamsList = new HashSet<>();
+        sortedList.stream().forEach(match -> teamsList.add(match.getFirstTeam()));
+        return teamsList;
+    }
+
+    private static List<Match> extractTeamMatches(List<Match> tournamentResults, String team) {
+        List<Match> teamMatches = tournamentResults.stream().filter(match -> match.getFirstTeam().equals(team)).collect(Collectors.toList());
+        return teamMatches;
+    }
+
+
 }
