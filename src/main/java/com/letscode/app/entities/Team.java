@@ -1,4 +1,4 @@
-package com.letscode.app.utils;
+package com.letscode.app.entities;
 
 public class Team {
     String name;

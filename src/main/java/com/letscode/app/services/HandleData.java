@@ -1,7 +1,7 @@
 package com.letscode.app.services;
 
-import com.letscode.app.utils.Match;
-import com.letscode.app.utils.Team;
+import com.letscode.app.entities.Match;
+import com.letscode.app.entities.Team;
 
 import java.util.Comparator;
 import java.util.HashSet;

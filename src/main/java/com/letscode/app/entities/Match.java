@@ -1,4 +1,4 @@
-package com.letscode.app.utils;
+package com.letscode.app.entities;
 
 import com.google.common.base.Objects;
 

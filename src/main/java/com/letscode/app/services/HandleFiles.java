@@ -1,7 +1,7 @@
 package com.letscode.app.services;
 
-import com.letscode.app.utils.Match;
-import com.letscode.app.utils.Team;
+import com.letscode.app.entities.Match;
+import com.letscode.app.entities.Team;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static com.letscode.app.App.FILES_PATH;
+import static com.letscode.app.App.OUTPUT_FILES_PATH;
 
 public class HandleFiles
 {
@@ -42,7 +42,7 @@ public class HandleFiles
 
     public static void writeTeamTxtFile(List<Match> matchList, Team team) throws IOException {
         String teamName = team.getName();
-        FileWriter out = new FileWriter(FILES_PATH + "teamFiles/" + teamName + "-history.txt");
+        FileWriter out = new FileWriter(OUTPUT_FILES_PATH + teamName + "-history.txt");
 
         try (PrintWriter printer = new PrintWriter(out)) {
             matchList.stream().forEach(match -> {
